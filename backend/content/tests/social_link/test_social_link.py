@@ -361,7 +361,9 @@ def test_organization_social_link_create_view(client: APIClient) -> None:
     OrganizationSocialLinkFactory.create_batch(num_links, org=org)
     assert OrganizationSocialLink.objects.count() == num_links
 
-    test_id = OrganizationSocialLink.objects.first().id
+    org_social_link = OrganizationSocialLink.objects.first()
+    assert org_social_link is not None
+    test_id = org_social_link.id
     login = client.post(
         path="/v1/auth/sign_in",
         data={"username": test_username, "password": test_password},
@@ -403,7 +405,9 @@ def test_group_social_link_create_view(client: APIClient) -> None:
     GroupSocialLinkFactory.create_batch(num_links, group=group)
     assert GroupSocialLink.objects.count() == num_links
 
-    test_id = GroupSocialLink.objects.first().id
+    group_social_link = GroupSocialLink.objects.first()
+    assert group_social_link is not None
+    test_id = group_social_link.id
     login = client.post(
         path="/v1/auth/sign_in",
         data={"username": test_username, "password": test_password},
@@ -445,7 +449,9 @@ def test_event_social_link_create_view(client: APIClient) -> None:
     EventSocialLinkFactory.create_batch(num_links, event=event)
     assert EventSocialLink.objects.count() == num_links
 
-    test_id = EventSocialLink.objects.first().id
+    event_social_link = EventSocialLink.objects.first()
+    assert event_social_link is not None
+    test_id = event_social_link.id
     login = client.post(
         path="/v1/auth/sign_in",
         data={"username": test_username, "password": test_password},

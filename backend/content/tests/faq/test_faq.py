@@ -318,7 +318,9 @@ def test_organization_faq_create_view() -> None:
     OrganizationFaqFactory.create_batch(num_faqs, org=org)
     assert OrganizationFaq.objects.count() == num_faqs
 
-    test_id = OrganizationFaq.objects.first().id
+    faq = OrganizationFaq.objects.first()
+    assert faq is not None
+    test_id = faq.id
 
     # Login to get token.
     login_response = client.post(
@@ -376,7 +378,9 @@ def test_group_faq_create_view() -> None:
     GroupFaqFactory.create_batch(num_faqs, group=group)
     assert GroupFaq.objects.count() == num_faqs
 
-    test_id = GroupFaq.objects.first().id
+    faq = GroupFaq.objects.first()
+    assert faq is not None
+    test_id = faq.id
 
     # Login to get token.
     login_response = client.post(
@@ -433,7 +437,9 @@ def test_event_faq_create_view() -> None:
     EventFaqFactory.create_batch(num_faqs, event=event)
     assert EventFaq.objects.count() == num_faqs
 
-    test_id = EventFaq.objects.first().id
+    faq = EventFaq.objects.first()
+    assert faq is not None
+    test_id = faq.id
 
     # Login to get token.
     login_response = client.post(

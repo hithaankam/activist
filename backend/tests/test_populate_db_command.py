@@ -164,7 +164,9 @@ def test_populate_db_command_with_preexisting_users():
 
     admins = UserModel.objects.filter(username="admin")
     assert admins.count() == 1
-    assert admins.first().username == "admin"
+    admin = admins.first()
+    assert admin is not None
+    assert admin.username == "admin"
 
 
 @pytest.mark.django_db
