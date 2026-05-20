@@ -28,7 +28,7 @@ dependencies = [
 dev = [
     "factory-boy>=3.3.3",
     "i18n-check>=1.19.4",
-    "mypy>=1.20.2",
+
     "numpydoc>=1.10.0",
     "prek>=0.3.11",
     "pytest>=9.0.3",
@@ -36,6 +36,7 @@ dev = [
     "pytest-django>=4.12.0",
     "ruff>=0.15.12",
     "ts-backend-check>=1.6.0",
+    "ty>=0.0.38",
     "types-icalendar>=6.3.2.20260408",
 ]
 audit = [
@@ -102,21 +103,6 @@ omit = [
     "*/utils/type_checker/*",
 ]
 
-[tool.mypy]
-mypy_path = "backend"
-plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
-strict = true
-exclude = ["^.*/tests/.*\\.py$", "^.*/test_.*\\.py$", "^.*/.*_tests\\.py$"]
-
-[[tool.mypy.overrides]]
-module = ["authentication.*", "content.*", "communities.*", "events.*"]
-# follow_imports = "skip"  # enable django-stubs
-ignore_errors = false
-
-[[tool.mypy.overrides]]
-module = ["django_filters.*"]
-ignore_missing_imports = true
-ignore_errors = true
 
 [tool.django-stubs]
 django_settings_module = "core.settings"
@@ -136,3 +122,6 @@ exclude = [
     "^test_.*$",      # test files
     "^views.*$",      # test files
 ]
+
+[tool.ty]
+exclude = ["tests"]
