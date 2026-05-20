@@ -26,7 +26,7 @@ from communities.organizations.models import (
 # MARK: Organization
 
 
-class OrganizationFactory(factory.django.DjangoModelFactory):
+class OrganizationFactory(factory.django.DjangoModelFactory[Organization]):
     """
     Factory for creating Organization model instances.
     """
@@ -51,7 +51,9 @@ class OrganizationFactory(factory.django.DjangoModelFactory):
 # MARK: Application
 
 
-class OrganizationApplicationStatusFactory(factory.django.DjangoModelFactory):
+class OrganizationApplicationStatusFactory(
+    factory.django.DjangoModelFactory[OrganizationApplicationStatus]
+):
     """
     Factory for creating OrganizationApplication model instances.
     """
@@ -62,7 +64,9 @@ class OrganizationApplicationStatusFactory(factory.django.DjangoModelFactory):
     status_name = factory.Faker("word")
 
 
-class OrganizationApplicationFactory(factory.django.DjangoModelFactory):
+class OrganizationApplicationFactory(
+    factory.django.DjangoModelFactory[OrganizationApplication]
+):
     """
     Factory for creating OrganizationApplication model instances.
     """
@@ -85,7 +89,7 @@ class OrganizationApplicationFactory(factory.django.DjangoModelFactory):
 # MARK: FAQ
 
 
-class OrganizationFaqFactory(factory.django.DjangoModelFactory):
+class OrganizationFaqFactory(factory.django.DjangoModelFactory[OrganizationFaq]):
     """
     Factory for creating Faq model instances.
     """
@@ -104,7 +108,7 @@ class OrganizationFaqFactory(factory.django.DjangoModelFactory):
 # MARK: Flag
 
 
-class OrganizationFlagFactory(factory.django.DjangoModelFactory):
+class OrganizationFlagFactory(factory.django.DjangoModelFactory[OrganizationFlag]):
     """
     Factory for creating a flag for an organization.
     """
@@ -122,7 +126,7 @@ class OrganizationFlagFactory(factory.django.DjangoModelFactory):
 # MARK: Image
 
 
-class OrganizationImageFactory(factory.django.DjangoModelFactory):
+class OrganizationImageFactory(factory.django.DjangoModelFactory[OrganizationImage]):
     """
     Factory for creating OrganizationImage model instances.
     """
@@ -137,7 +141,7 @@ class OrganizationImageFactory(factory.django.DjangoModelFactory):
 # MARK: Member
 
 
-class OrganizationMemberFactory(factory.django.DjangoModelFactory):
+class OrganizationMemberFactory(factory.django.DjangoModelFactory[OrganizationMember]):
     """
     Factory for creating OrganizationMember model instances.
     """
@@ -155,7 +159,9 @@ class OrganizationMemberFactory(factory.django.DjangoModelFactory):
 # MARK: Resource
 
 
-class OrganizationResourceFactory(factory.django.DjangoModelFactory):
+class OrganizationResourceFactory(
+    factory.django.DjangoModelFactory[OrganizationResource]
+):
     """
     Factory for creating OrganizationResource model instances.
     """
@@ -182,7 +188,9 @@ class OrganizationResourceFactory(factory.django.DjangoModelFactory):
 # MARK: Social Link
 
 
-class OrganizationSocialLinkFactory(factory.django.DjangoModelFactory):
+class OrganizationSocialLinkFactory(
+    factory.django.DjangoModelFactory[OrganizationSocialLink]
+):
     """
     Factory for creating OrganizationSocialLink model instances.
     """
@@ -204,7 +212,7 @@ class OrganizationSocialLinkFactory(factory.django.DjangoModelFactory):
 # MARK: Task
 
 
-class OrganizationTaskFactory(factory.django.DjangoModelFactory):
+class OrganizationTaskFactory(factory.django.DjangoModelFactory[OrganizationTask]):
     """
     Factory for creating OrganizationTask model instances.
     """
@@ -220,7 +228,7 @@ class OrganizationTaskFactory(factory.django.DjangoModelFactory):
 # MARK: Text
 
 
-class OrganizationTextFactory(factory.django.DjangoModelFactory):
+class OrganizationTextFactory(factory.django.DjangoModelFactory[OrganizationText]):
     """
     Factory for creating OrganizationText model instances.
     """

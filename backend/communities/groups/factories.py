@@ -23,7 +23,7 @@ from communities.groups.models import (
 # MARK: Group
 
 
-class GroupFactory(factory.django.DjangoModelFactory):
+class GroupFactory(factory.django.DjangoModelFactory[Group]):
     """
     Factory for creating Group model instances.
     """
@@ -46,7 +46,7 @@ class GroupFactory(factory.django.DjangoModelFactory):
 # MARK: FAQ
 
 
-class GroupFaqFactory(factory.django.DjangoModelFactory):
+class GroupFaqFactory(factory.django.DjangoModelFactory[GroupFaq]):
     """
     Factory for creating Faq model instances.
     """
@@ -65,7 +65,7 @@ class GroupFaqFactory(factory.django.DjangoModelFactory):
 # MARK: Flag
 
 
-class GroupFlagFactory(factory.django.DjangoModelFactory):
+class GroupFlagFactory(factory.django.DjangoModelFactory[GroupFlag]):
     """
     Factory for creating GroupFlag model instances.
     """
@@ -83,7 +83,7 @@ class GroupFlagFactory(factory.django.DjangoModelFactory):
 # MARK: Image
 
 
-class GroupImageFactory(factory.django.DjangoModelFactory):
+class GroupImageFactory(factory.django.DjangoModelFactory[GroupImage]):
     """
     Factory for creating GroupImage model instances.
     """
@@ -98,7 +98,7 @@ class GroupImageFactory(factory.django.DjangoModelFactory):
 # MARK: Member
 
 
-class GroupMemberFactory(factory.django.DjangoModelFactory):
+class GroupMemberFactory(factory.django.DjangoModelFactory[GroupMember]):
     """
     Factory for creating GroupMember model instances.
     """
@@ -114,7 +114,7 @@ class GroupMemberFactory(factory.django.DjangoModelFactory):
 # MARK: Resource
 
 
-class GroupResourceFactory(factory.django.DjangoModelFactory):
+class GroupResourceFactory(factory.django.DjangoModelFactory[GroupResource]):
     """
     Factory for creating GroupResource model instances.
     """
@@ -141,7 +141,7 @@ class GroupResourceFactory(factory.django.DjangoModelFactory):
 # MARK: Social Link
 
 
-class GroupSocialLinkFactory(factory.django.DjangoModelFactory):
+class GroupSocialLinkFactory(factory.django.DjangoModelFactory[GroupSocialLink]):
     """
     Factory for creating GroupSocialLink model instances.
     """
@@ -163,7 +163,7 @@ class GroupSocialLinkFactory(factory.django.DjangoModelFactory):
 # MARK: Text
 
 
-class GroupTextFactory(factory.django.DjangoModelFactory):
+class GroupTextFactory(factory.django.DjangoModelFactory[GroupText]):
     """
     Factory for creating GroupText model instances.
     """

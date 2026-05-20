@@ -29,7 +29,7 @@ location_types = ["online", "physical"]
 # MARK: Event
 
 
-class EventFactory(factory.django.DjangoModelFactory):
+class EventFactory(factory.django.DjangoModelFactory[Event]):
     """
     Factory for creating Event model instances.
     """
@@ -157,7 +157,7 @@ class EventFactory(factory.django.DjangoModelFactory):
 # MARK: EventTime
 
 
-class EventTimeFactory(factory.django.DjangoModelFactory):
+class EventTimeFactory(factory.django.DjangoModelFactory[EventTime]):
     """
     Factory for creating EventTime model instances.
     """
@@ -203,7 +203,7 @@ class EventTimeFactory(factory.django.DjangoModelFactory):
 # MARK: Role
 
 
-class RoleFactory(factory.django.DjangoModelFactory):
+class RoleFactory(factory.django.DjangoModelFactory[Role]):
     """
     Factory for creating Role model instances.
     """
@@ -226,7 +226,7 @@ class RoleFactory(factory.django.DjangoModelFactory):
 # MARK: Attendee
 
 
-class EventAttendeeFactory(factory.django.DjangoModelFactory):
+class EventAttendeeFactory(factory.django.DjangoModelFactory[EventAttendee]):
     """
     Factory for creating EventAttendee model instances.
     """
@@ -243,7 +243,9 @@ class EventAttendeeFactory(factory.django.DjangoModelFactory):
 # MARK: Attendee Status
 
 
-class EventAttendeeStatusFactory(factory.django.DjangoModelFactory):
+class EventAttendeeStatusFactory(
+    factory.django.DjangoModelFactory[EventAttendeeStatus]
+):
     """
     Factory for creating EventAttendeeStatus model instances.
     """
@@ -257,7 +259,7 @@ class EventAttendeeStatusFactory(factory.django.DjangoModelFactory):
 # MARK: FAQ
 
 
-class EventFaqFactory(factory.django.DjangoModelFactory):
+class EventFaqFactory(factory.django.DjangoModelFactory[EventFaq]):
     """
     Factory for creating Faq model instances.
     """
@@ -276,7 +278,7 @@ class EventFaqFactory(factory.django.DjangoModelFactory):
 # MARK: Flag
 
 
-class EventFlagFactory(factory.django.DjangoModelFactory):
+class EventFlagFactory(factory.django.DjangoModelFactory[EventFlag]):
     """
     Factory for creating Event Flag models.
     """
@@ -294,7 +296,7 @@ class EventFlagFactory(factory.django.DjangoModelFactory):
 # MARK: Format
 
 
-class FormatFactory(factory.django.DjangoModelFactory):
+class FormatFactory(factory.django.DjangoModelFactory[Format]):
     """
     Factory for creating Format model instances.
     """
@@ -316,7 +318,7 @@ class FormatFactory(factory.django.DjangoModelFactory):
 # MARK: Resource
 
 
-class EventResourceFactory(factory.django.DjangoModelFactory):
+class EventResourceFactory(factory.django.DjangoModelFactory[EventResource]):
     """
     Factory for creating EventResource model instances.
     """
@@ -343,7 +345,7 @@ class EventResourceFactory(factory.django.DjangoModelFactory):
 # MARK: Social Link
 
 
-class EventSocialLinkFactory(factory.django.DjangoModelFactory):
+class EventSocialLinkFactory(factory.django.DjangoModelFactory[EventSocialLink]):
     """
     Factory for creating EventSocialLink model instances.
     """
@@ -365,7 +367,7 @@ class EventSocialLinkFactory(factory.django.DjangoModelFactory):
 # MARK: Text
 
 
-class EventTextFactory(factory.django.DjangoModelFactory):
+class EventTextFactory(factory.django.DjangoModelFactory[EventText]):
     """
     Factory for creating EventText model instances.
     """

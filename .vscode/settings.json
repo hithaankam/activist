@@ -9,4 +9,5 @@
   "css.customData": [
     ".vscode/tailwind.json"
   ],
+  "kiroAgent.configureMCP": "Disabled",
 }

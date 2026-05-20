@@ -20,7 +20,7 @@ from authentication.models import (
 # MARK: Support
 
 
-class SupportEntityTypeFactory(factory.django.DjangoModelFactory):
+class SupportEntityTypeFactory(factory.django.DjangoModelFactory[SupportEntityType]):
     """
     Factory for creating SupportEntityType model instances.
     """
@@ -31,7 +31,7 @@ class SupportEntityTypeFactory(factory.django.DjangoModelFactory):
     name = factory.Faker("word")
 
 
-class SupportFactory(factory.django.DjangoModelFactory):
+class SupportFactory(factory.django.DjangoModelFactory[Support]):
     """
     Factory for creating Support model instances.
 
@@ -56,7 +56,7 @@ class SupportFactory(factory.django.DjangoModelFactory):
     # MARK: Session
 
 
-class SessionFactory(factory.django.DjangoModelFactory):
+class SessionFactory(factory.django.DjangoModelFactory[SessionModel]):
     """
     Factory for creating Session model instances.
 
@@ -78,7 +78,7 @@ class SessionFactory(factory.django.DjangoModelFactory):
 # MARK: User
 
 
-class UserFactory(factory.django.DjangoModelFactory):
+class UserFactory(factory.django.DjangoModelFactory[UserModel]):
     """
     Factory for creating UserModel instances.
     """
@@ -130,7 +130,7 @@ class UserFactory(factory.django.DjangoModelFactory):
             return
 
 
-class UserFlagFactory(factory.django.DjangoModelFactory):
+class UserFlagFactory(factory.django.DjangoModelFactory[UserFlag]):
     """
     Factory to create an instance of UserFlag model.
     """

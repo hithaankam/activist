@@ -31,7 +31,7 @@ topic_types = [t["fields"]["type"] for t in topics_dict]
 # MARK: Community Loc
 
 
-class EntityLocationFactory(factory.django.DjangoModelFactory):
+class EntityLocationFactory(factory.django.DjangoModelFactory[Location]):
     """
     Factory for creating Location model instances for entities.
     """
@@ -112,7 +112,7 @@ class EntityLocationFactory(factory.django.DjangoModelFactory):
 # MARK: Event Loc
 
 
-class EventLocationFactory(factory.django.DjangoModelFactory):
+class EventLocationFactory(factory.django.DjangoModelFactory[Location]):
     """
     Factory for creating Location model instances for events.
     """
@@ -181,7 +181,7 @@ class EventLocationFactory(factory.django.DjangoModelFactory):
 # MARK: Discussion
 
 
-class DiscussionFactory(factory.django.DjangoModelFactory):
+class DiscussionFactory(factory.django.DjangoModelFactory[Discussion]):
     """
     Factory for creating Discussion model instances.
     """
@@ -200,7 +200,7 @@ class DiscussionFactory(factory.django.DjangoModelFactory):
 # MARK: Discussion Entry
 
 
-class DiscussionEntryFactory(factory.django.DjangoModelFactory):
+class DiscussionEntryFactory(factory.django.DjangoModelFactory[DiscussionEntry]):
     """
     Factory for creating Discussion Entry instances.
     """
@@ -222,7 +222,7 @@ class DiscussionEntryFactory(factory.django.DjangoModelFactory):
 # MARK: FAQ
 
 
-class FaqFactory(factory.django.DjangoModelFactory):
+class FaqFactory(factory.django.DjangoModelFactory[Faq]):
     """
     Factory for creating Faq model instances.
     """
@@ -240,7 +240,7 @@ class FaqFactory(factory.django.DjangoModelFactory):
 # MARK: Image
 
 
-class ImageFactory(factory.django.DjangoModelFactory):
+class ImageFactory(factory.django.DjangoModelFactory[Image]):
     """
     Factory for creating Image model instances.
     """
@@ -261,7 +261,7 @@ class ImageFactory(factory.django.DjangoModelFactory):
 # MARK: Resource
 
 
-class ResourceFactory(factory.django.DjangoModelFactory):
+class ResourceFactory(factory.django.DjangoModelFactory[Resource]):
     """
     Factory for creating Resource model instances.
     """
@@ -288,7 +288,7 @@ class ResourceFactory(factory.django.DjangoModelFactory):
 # MARK: Resource Flag
 
 
-class ResourceFlagFactory(factory.django.DjangoModelFactory):
+class ResourceFlagFactory(factory.django.DjangoModelFactory[ResourceFlag]):
     """
     Factory for creating instances of ResourceFlag model.
     """
@@ -306,7 +306,7 @@ class ResourceFlagFactory(factory.django.DjangoModelFactory):
 # MARK: Task
 
 
-class TaskFactory(factory.django.DjangoModelFactory):
+class TaskFactory(factory.django.DjangoModelFactory[Task]):
     """
     Factory for creating Task model instances.
     """
@@ -324,7 +324,7 @@ class TaskFactory(factory.django.DjangoModelFactory):
 # MARK: Topic
 
 
-class TopicFactory(factory.django.DjangoModelFactory):
+class TopicFactory(factory.django.DjangoModelFactory[Topic]):
     """
     Factory for creating Topic model instances.
     """
