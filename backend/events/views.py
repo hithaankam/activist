@@ -6,7 +6,7 @@ API views for event management.
 import logging
 import os
 import re
-from typing import Any, Sequence, Type
+from typing import Any, Sequence, Type, cast
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
@@ -150,13 +150,14 @@ class EventAPIView(GenericAPIView[Event]):
         validated_data = serializer.validated_data
         validated_data["created_by"] = request.user
 
+        user = cast(UserModel, request.user)
         try:
             event = serializer.save()
-            logger.info(f"Event created by user {request.user.id}")
+            logger.info(f"Event created by user {user.id}")
 
         except ValidationError as e:
             logger.exception(
-                f"Validation failed for event creation by user {request.user.id}: {e}"
+                f"Validation failed for event creation by user {user.id}: {e}"
             )
             return Response(
                 {"detail": str(e)},
@@ -238,7 +239,8 @@ class EventDetailAPIView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if request.user != event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != event.created_by and not user.is_staff:
             return Response(
                 {"detail": "User not authorized."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -274,7 +276,8 @@ class EventDetailAPIView(APIView):
                 {"detail": "Event Not Found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != event.created_by and not user.is_staff:
             return Response(
                 {"detail": "User not authorized."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -318,13 +321,14 @@ class EventFlagAPIView(GenericAPIView[EventFlag]):
         serializer = serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        user = cast(UserModel, request.user)
         try:
             serializer.save(created_by=request.user)
-            logger.info(f"Event flag created by user {request.user.id}")
+            logger.info(f"Event flag created by user {user.id}")
 
         except (IntegrityError, OperationalError) as e:
             logger.exception(
-                f"Failed to create event flag for user {request.user.id}: {e}"
+                f"Failed to create event flag for user {user.id}: {e}"
             )
             return Response(
                 {"detail": "Failed to create flag."}, status=status.HTTP_400_BAD_REQUEST
@@ -409,14 +413,15 @@ class EventFaqViewSet(viewsets.ModelViewSet[EventFaq]):
 
         event: Event = serializer.validated_data["event"]
 
-        if request.user != event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != event.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to create FAQs for this event."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         serializer.save()
-        logger.info(f"FAQ created for event {event.id} by user {request.user.id}")
+        logger.info(f"FAQ created for event {event.id} by user {user.id}")
 
         return Response(
             {"message": "FAQ created successfully."}, status=status.HTTP_201_CREATED
@@ -432,7 +437,8 @@ class EventFaqViewSet(viewsets.ModelViewSet[EventFaq]):
                 {"detail": "FAQ not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != faq.event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != faq.event.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to update this FAQ."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -474,14 +480,14 @@ class EventFaqViewSet(viewsets.ModelViewSet[EventFaq]):
         else:
             raise ValueError("Event is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        if request.user != creator and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to delete this FAQ."},
                 status=status.HTTP_403_FORBIDDEN,
             )
 
         faq.delete()
-        logger.info(f"FAQ {pk} deleted for event {event.id} by user {request.user.id}")
+        logger.info(f"FAQ {pk} deleted for event {event.id} by user {user.id}")
 
         return Response(
             {"message": "FAQ deleted successfully."}, status=status.HTTP_204_NO_CONTENT
@@ -502,7 +508,8 @@ class EventResourceViewSet(viewsets.ModelViewSet[EventResource]):
 
         event: Event = serializer.validated_data["event"]
 
-        if request.user != event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != event.created_by and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to create Resources for this event."
@@ -511,7 +518,7 @@ class EventResourceViewSet(viewsets.ModelViewSet[EventResource]):
             )
 
         serializer.save(created_by=request.user)
-        logger.info(f"Resource created for event {event.id} by user {request.user.id}")
+        logger.info(f"Resource created for event {event.id} by user {user.id}")
 
         return Response(
             {"message": "Resource created successfully."},
@@ -528,7 +535,8 @@ class EventResourceViewSet(viewsets.ModelViewSet[EventResource]):
                 {"detail": "Resource not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != resource.event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != resource.event.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to update this Resource."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -570,7 +578,8 @@ class EventSocialLinkViewSet(viewsets.ModelViewSet[EventSocialLink]):
 
         event: Event = serializer.validated_data["event"]
 
-        if request.user != event.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != event.created_by and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to create social links for this event."
@@ -617,7 +626,8 @@ class EventSocialLinkViewSet(viewsets.ModelViewSet[EventSocialLink]):
         else:
             raise ValueError("Event is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != creator and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to update the social links for this event."
@@ -670,7 +680,8 @@ class EventSocialLinkViewSet(viewsets.ModelViewSet[EventSocialLink]):
         else:
             raise ValueError("Event is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != creator and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to delete this social link."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -678,7 +689,7 @@ class EventSocialLinkViewSet(viewsets.ModelViewSet[EventSocialLink]):
 
         social_link.delete()
         logger.info(
-            f"Social link {pk} deleted for event {event.id} by user {request.user.id}"
+            f"Social link {pk} deleted for event {event.id} by user {user.id}"
         )
 
         return Response(
@@ -717,9 +728,10 @@ class EventTextViewSet(GenericAPIView[EventText]):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        user = cast(UserModel, request.user)
         if (
             request.user != getattr(event_text.event, "created_by", None)
-            and not request.user.is_staff
+            and not user.is_staff
         ):
             return Response(
                 {"detail": "You are not authorized to update to this event's text."},

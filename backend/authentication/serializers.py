@@ -41,7 +41,7 @@ class SignUpSerializer(serializers.ModelSerializer[UserModel]):
         fields = ("username", "password", "password_confirmed", "email")
         extra_kwargs = {"password": {"write_only": True}, "email": {"required": True}}
 
-    def validate(self, data: Dict[str, Union[str, Any]]) -> Dict[str, Union[str, Any]]:
+    def validate(self, attrs: Dict[str, Union[str, Any]]) -> Dict[str, Union[str, Any]]:
         """
         Validate the data before signing up a user.
 
@@ -57,10 +57,10 @@ class SignUpSerializer(serializers.ModelSerializer[UserModel]):
         """
         pattern = r"^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*()_+{}\[\]:;<>,.?~\\-]).{12,}$"
 
-        if not re.match(pattern, data["password"]):
+        if not re.match(pattern, attrs["password"]):
             logger.warning(
                 "Password validation failed for username: %s - password does not meet complexity requirements",
-                data.get("username", "unknown"),
+                attrs.get("username", "unknown"),
             )
             raise serializers.ValidationError(
                 (
@@ -69,10 +69,10 @@ class SignUpSerializer(serializers.ModelSerializer[UserModel]):
                 code="invalid_password",
             )
 
-        if data["password"] != data["password_confirmed"]:
+        if attrs["password"] != attrs["password_confirmed"]:
             logger.warning(
                 "Password confirmation failed for username: %s - passwords do not match",
-                data.get("username", "unknown"),
+                attrs.get("username", "unknown"),
             )
             raise serializers.ValidationError(
                 ("The passwords did not match. Please try again."),
@@ -80,9 +80,9 @@ class SignUpSerializer(serializers.ModelSerializer[UserModel]):
             )
 
         logger.info(
-            "User signup validation successful for username: %s", data.get("username")
+            "User signup validation successful for username: %s", attrs.get("username")
         )
-        return data
+        return attrs
 
     def create(self, validated_data: Dict[str, Union[str, Any]]) -> UserModel:
         """
@@ -128,7 +128,7 @@ class SignInSerializer(serializers.Serializer[UserModel]):
     username = serializers.CharField(required=False)
     password = serializers.CharField(write_only=True)
 
-    def validate(self, data: Dict[str, Union[str, Any]]) -> Dict[str, Union[str, Any]]:
+    def validate(self, attrs: Dict[str, Union[str, Any]]) -> Dict[str, Union[str, Any]]:
         """
         Validate the data before signing in a user.
 
@@ -142,12 +142,12 @@ class SignInSerializer(serializers.Serializer[UserModel]):
         dict[str, Union[str, Any]]
             Validated data for processing.
         """
-        identifier = data.get("email") or data.get("username", "unknown")
+        identifier = attrs.get("email") or attrs.get("username", "unknown")
 
-        if not data.get("email"):
-            user = UserModel.objects.filter(username=data.get("username")).first()
+        if not attrs.get("email"):
+            user = UserModel.objects.filter(username=attrs.get("username")).first()
         else:
-            user = UserModel.objects.filter(email=data.get("email")).first()
+            user = UserModel.objects.filter(email=attrs.get("email")).first()
 
         if user is None:
             logger.warning("Sign in attempt failed - user not found: %s", identifier)
@@ -158,7 +158,7 @@ class SignInSerializer(serializers.Serializer[UserModel]):
 
         authenticated_user: UserModel = authenticate(
             username=user,
-            password=data.get("password"),
+            password=attrs.get("password"),
         )  # type: ignore
 
         if authenticated_user is None:
@@ -183,16 +183,16 @@ class SignInSerializer(serializers.Serializer[UserModel]):
                 code="email_not_confirmed",
             )
 
-        data["user"] = authenticated_user
+        attrs["user"] = authenticated_user
 
         try:
             refresh_token = RefreshToken.for_user(authenticated_user)
             access_token = refresh_token.access_token
             access_token.set_exp(lifetime=timedelta(minutes=5))
 
-            data["access"] = str(access_token)
-            data["refresh"] = str(refresh_token)
-            data["user"] = user
+            attrs["access"] = str(access_token)
+            attrs["refresh"] = str(refresh_token)
+            attrs["user"] = user
             logger.info(
                 "User signed in successfully: %s (ID: %s)", user.username, user.id
             )
@@ -205,7 +205,7 @@ class SignInSerializer(serializers.Serializer[UserModel]):
             )
             raise
 
-        return data
+        return attrs
 
 
 class UserSerializer(serializers.ModelSerializer[UserModel]):
@@ -250,7 +250,7 @@ class PasswordResetSerializer(serializers.Serializer[UserModel]):
     password = serializers.CharField(write_only=True)
     code = serializers.UUIDField(required=False)
 
-    def validate(self, data: Dict[str, Union[str, Any]]) -> UserModel:
+    def validate(self, attrs: Dict[str, Union[str, Any]]) -> UserModel:
         """
         Validate the data before signing up a user.
 
@@ -264,12 +264,12 @@ class PasswordResetSerializer(serializers.Serializer[UserModel]):
         UserModel
             The user with a reset password.
         """
-        if data.get("code") is not None:
-            user = UserModel.objects.filter(verification_code=data.get("code")).first()
-            identifier = f"code: {data.get('code')}"
+        if attrs.get("code") is not None:
+            user = UserModel.objects.filter(verification_code=attrs.get("code")).first()
+            identifier = f"code: {attrs.get('code')}"
         else:
-            user = UserModel.objects.filter(email=data.get("email")).first()
-            identifier = f"email: {data.get('email')}"
+            user = UserModel.objects.filter(email=attrs.get("email")).first()
+            identifier = f"email: {attrs.get('email')}"
 
         if user is None:
             logger.warning(

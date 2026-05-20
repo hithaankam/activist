@@ -6,6 +6,7 @@ API views for authentication management.
 import logging
 import os
 import uuid
+from typing import cast
 
 import dotenv
 from django.contrib.auth import login, logout
@@ -87,7 +88,7 @@ class SignOutView(APIView):
         },
     )
     def post(self, request: Request) -> Response:
-        user = request.user
+        user = cast(UserModel, request.user)
         logger.info(f"User logout attempt: {user.username} (ID: {user.id})")
 
         logout(request)
@@ -249,7 +250,8 @@ class SessionView(APIView):
                 {"detail": "You are not authenticated."},
                 status=status.HTTP_401_UNAUTHORIZED,
             )
-        user_id = request.user.id
+        user = cast(UserModel, request.user)
+        user_id = user.id
 
         session = SessionModel.objects.filter(user=user_id).latest("created_at")
 
@@ -389,8 +391,9 @@ class DeleteUserView(APIView):
         },
     )
     def delete(self, request: Request) -> Response:
-        user_id = request.user.id
-        username = request.user.username
+        user = cast(UserModel, request.user)
+        user_id = user.id
+        username = user.username
         logger.info(f"User account deletion requested: {username} (ID: {user_id})")
 
         request.user.delete()
@@ -409,7 +412,8 @@ class UserFlagAPIView(GenericAPIView[UserFlag]):
 
     @extend_schema(responses={200: UserFlagSerializers(many=True)})
     def get(self, request: Request) -> Response:
-        logger.info(f"User flag list requested by user: {request.user.username}")
+        user = cast(UserModel, request.user)
+        logger.info(f"User flag list requested by user: {user.username}")
         queryset = self.filter_queryset(self.get_queryset())
         page = self.paginate_queryset(queryset)
 
@@ -427,7 +431,8 @@ class UserFlagAPIView(GenericAPIView[UserFlag]):
         }
     )
     def post(self, request: Request) -> Response:
-        logger.info(f"User flag creation requested by user: {request.user.username}")
+        user = cast(UserModel, request.user)
+        logger.info(f"User flag creation requested by user: {user.username}")
         serializer_class = self.get_serializer_class()
         serializer = serializer_class(data=request.data, many=True)
         serializer.is_valid(raise_exception=True)
@@ -435,12 +440,12 @@ class UserFlagAPIView(GenericAPIView[UserFlag]):
         try:
             serializer.save(created_by=request.user)
             logger.info(
-                f"User flag(s) created successfully by user: {request.user.username}"
+                f"User flag(s) created successfully by user: {user.username}"
             )
 
         except (IntegrityError, OperationalError) as e:
             logger.error(
-                f"Failed to create user flag(s) by {request.user.username}: {e}"
+                f"Failed to create user flag(s) by {user.username}: {e}"
             )
             return Response(
                 {"detail": "Failed to create flag."}, status=status.HTTP_400_BAD_REQUEST
@@ -466,8 +471,9 @@ class UserFlagDetailAPIView(GenericAPIView[UserFlag]):
         }
     )
     def get(self, request: Request, id: str | uuid.UUID) -> Response:
+        user = cast(UserModel, request.user)
         logger.info(
-            f"User flag detail requested: ID {id} by user {request.user.username}"
+            f"User flag detail requested: ID {id} by user {user.username}"
         )
         try:
             flag = UserFlag.objects.get(id=id)
@@ -497,8 +503,9 @@ class UserFlagDetailAPIView(GenericAPIView[UserFlag]):
         }
     )
     def delete(self, request: Request, id: str | uuid.UUID) -> Response:
+        user = cast(UserModel, request.user)
         logger.info(
-            f"User flag deletion requested: ID {id} by user {request.user.username}"
+            f"User flag deletion requested: ID {id} by user {user.username}"
         )
         try:
             flag = UserFlag.objects.get(id=id)
@@ -513,7 +520,7 @@ class UserFlagDetailAPIView(GenericAPIView[UserFlag]):
 
         flag.delete()
         logger.info(
-            f"User flag deleted successfully: ID {id} by user {request.user.username}"
+            f"User flag deleted successfully: ID {id} by user {user.username}"
         )
         return Response(
             {"message": "Flag deleted successfully."}, status=status.HTTP_204_NO_CONTENT

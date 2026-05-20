@@ -210,7 +210,7 @@ class GroupPOSTSerializer(serializers.Serializer[Group]):
     country_code = serializers.CharField(max_length=3)
     city = serializers.CharField(max_length=255)
 
-    def validate(self, data: dict[str, Any]) -> dict[str, Any]:
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """
         Validate the data being posted.
 
@@ -224,7 +224,7 @@ class GroupPOSTSerializer(serializers.Serializer[Group]):
         dict[str, Any]
             Validated data after validation completes.
         """
-        return data
+        return attrs
 
     def create(self, validated_data: dict[str, Any]) -> Group:
         """
@@ -301,7 +301,7 @@ class GroupSerializer(serializers.ModelSerializer[Group]):
 
         fields = "__all__"
 
-    def validate(self, data: dict[str, Any]) -> dict[str, Any]:
+    def validate(self, attrs: dict[str, Any]) -> dict[str, Any]:
         """
         Validate the data before creating a group.
 
@@ -315,12 +315,12 @@ class GroupSerializer(serializers.ModelSerializer[Group]):
         dict[str, Any]
             Validated data for processing.
         """
-        if data.get("terms_checked") is False:
+        if attrs.get("terms_checked") is False:
             raise serializers.ValidationError(
                 "You must accept the terms of service to create a group."
             )
 
-        return data
+        return attrs
 
     def create(self, validated_data: dict[str, Any]) -> Group:
         """

@@ -147,7 +147,7 @@ class ImageSerializer(serializers.ModelSerializer[Image]):
         fields = ["id", "file_object", "creation_date"]
         read_only_fields = ["id", "creation_date"]
 
-    def validate(self, data: Dict[str, UploadedFile]) -> Dict[str, UploadedFile]:
+    def validate(self, attrs: Dict[str, UploadedFile]) -> Dict[str, UploadedFile]:
         """
         Validate uploaded image files.
 
@@ -166,7 +166,7 @@ class ImageSerializer(serializers.ModelSerializer[Image]):
         ValidationError
             If no file was submitted or if the file size exceeds the maximum limit.
         """
-        if "file_object" not in data:
+        if "file_object" not in attrs:
             raise serializers.ValidationError("No file was submitted.")
 
         if "entity_type" not in self.context["request"].data:
@@ -180,14 +180,14 @@ class ImageSerializer(serializers.ModelSerializer[Image]):
         # DATA_UPLOAD_MAX_MEMORY_SIZE and IMAGE_UPLOAD_MAX_FILE_SIZE are set in core/settings.py.
         # The file size limit is not being enforced. We're checking the file size here.
         if (
-            data["file_object"].size is not None
-            and data["file_object"].size > settings.IMAGE_UPLOAD_MAX_FILE_SIZE
+            attrs["file_object"].size is not None
+            and attrs["file_object"].size > settings.IMAGE_UPLOAD_MAX_FILE_SIZE
         ):
             raise serializers.ValidationError(
-                f"The file size ({data['file_object'].size} bytes) is too large. The maximum file size is {settings.IMAGE_UPLOAD_MAX_FILE_SIZE} bytes."
+                f"The file size ({attrs['file_object'].size} bytes) is too large. The maximum file size is {settings.IMAGE_UPLOAD_MAX_FILE_SIZE} bytes."
             )
 
-        return data
+        return attrs
 
     def to_representation(self, instance: Image) -> Dict[str, Any]:
         """
@@ -283,7 +283,7 @@ class ImageIconSerializer(serializers.ModelSerializer[Image]):
         fields = ["id", "file_object", "creation_date"]
         read_only_fields = ["id", "creation_date"]
 
-    def validate(self, data: Dict[str, UploadedFile]) -> Dict[str, UploadedFile]:
+    def validate(self, attrs: Dict[str, UploadedFile]) -> Dict[str, UploadedFile]:
         """
         Validate uploaded image files.
 
@@ -302,7 +302,7 @@ class ImageIconSerializer(serializers.ModelSerializer[Image]):
         ValidationError
             If no file was submitted or if the file size exceeds the maximum limit.
         """
-        if "file_object" not in data:
+        if "file_object" not in attrs:
             raise serializers.ValidationError("No file was submitted.")
 
         if "entity_type" not in self.context["request"].data:
@@ -316,14 +316,14 @@ class ImageIconSerializer(serializers.ModelSerializer[Image]):
         # IMAGE_UPLOAD_MAX_FILE_SIZE is defined in core/settings.py (alongside
         # DATA_UPLOAD_MAX_MEMORY_SIZE); enforce the upload limit here.
         if (
-            data["file_object"].size is not None
-            and data["file_object"].size > settings.IMAGE_UPLOAD_MAX_FILE_SIZE
+            attrs["file_object"].size is not None
+            and attrs["file_object"].size > settings.IMAGE_UPLOAD_MAX_FILE_SIZE
         ):
             raise serializers.ValidationError(
-                f"The file size ({data['file_object'].size} bytes) is too large. The maximum file size is {settings.IMAGE_UPLOAD_MAX_FILE_SIZE} bytes."
+                f"The file size ({attrs['file_object'].size} bytes) is too large. The maximum file size is {settings.IMAGE_UPLOAD_MAX_FILE_SIZE} bytes."
             )
 
-        return data
+        return attrs
 
     def to_representation(self, instance: Image) -> Dict[str, Any]:
         """
@@ -476,7 +476,7 @@ class TopicSerializer(serializers.ModelSerializer[Topic]):
         model = Topic
         fields = "__all__"
 
-    def validate(self, data: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
+    def validate(self, attrs: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
         """
         Validate topic data including active status and deprecation date.
 
@@ -496,18 +496,18 @@ class TopicSerializer(serializers.ModelSerializer[Topic]):
             If an active topic has a deprecation date or
             an inactive topic doesn't have a deprecation date.
         """
-        if data["active"] is True and data.get("deprecation_date") is not None:
+        if attrs["active"] is True and attrs.get("deprecation_date") is not None:
             raise serializers.ValidationError(
                 ("Active topics cannot have a deprecation date."),
                 code="active_topic_with_deprecation_error",
             )
 
-        if data["active"] is False and data.get("deprecation_date") is None:
+        if attrs["active"] is False and attrs.get("deprecation_date") is None:
             raise serializers.ValidationError(
                 ("Deprecated topics must have a deprecation date."),
                 code="inactive_topic_no_deprecation_error",
             )
 
-        validate_creation_and_deprecation_dates(data=data)
+        validate_creation_and_deprecation_dates(data=attrs)
 
-        return data
+        return attrs

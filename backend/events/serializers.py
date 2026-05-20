@@ -290,7 +290,7 @@ class EventPOSTSerializer(serializers.Serializer[Any]):
     times = EventPOSTTimesSerializer(required=True, many=True)
     iso = serializers.CharField(required=False, default="en", max_length=3)
 
-    def validate(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def validate(self, attrs: Dict[str, Any]) -> Dict[str, Any]:
         """
         Validate event creation data.
 
@@ -309,13 +309,13 @@ class EventPOSTSerializer(serializers.Serializer[Any]):
         ValidationError
             If validation fails for any field.
         """
-        orgs = data.pop("orgs")
-        times: list[dict[str, Any]] = data.get("times") or []
-        groups = data.pop("groups", None)
-        topics = data.pop("topics", None)
+        orgs = attrs.pop("orgs")
+        times: list[dict[str, Any]] = attrs.get("times") or []
+        groups = attrs.pop("groups", None)
+        topics = attrs.pop("topics", None)
 
         orgs = Organization.objects.filter(id__in=orgs)
-        data["orgs"] = orgs
+        attrs["orgs"] = orgs
 
         # Get the local timezone from Django settings.
         local_tz = zoneinfo.ZoneInfo(settings.TIME_ZONE)
@@ -359,7 +359,7 @@ class EventPOSTSerializer(serializers.Serializer[Any]):
                     "One or more topics are invalid or inactive."
                 )
 
-            data["topics"] = query_topics
+            attrs["topics"] = query_topics
 
         if groups:
             query_groups = Group.objects.filter(id__in=groups, org__in=orgs).distinct()
@@ -367,9 +367,9 @@ class EventPOSTSerializer(serializers.Serializer[Any]):
             if len(query_groups) != len(groups):
                 raise serializers.ValidationError("One or more groups do not exist.")
 
-            data["groups"] = query_groups
+            attrs["groups"] = query_groups
 
-        return data
+        return attrs
 
     def create(self, validated_data: Dict[str, Any]) -> Event:
         """
@@ -464,7 +464,7 @@ class EventSerializer(serializers.ModelSerializer[Event]):
 
         fields = "__all__"
 
-    def validate(self, data: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
+    def validate(self, attrs: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
         """
         Validate event data including time constraints and terms.
 
@@ -484,8 +484,8 @@ class EventSerializer(serializers.ModelSerializer[Event]):
             If validation fails for any field.
         """
 
-        start = data.get("start_time")
-        end = data.get("end_time")
+        start = attrs.get("start_time")
+        end = attrs.get("end_time")
 
         # Verify start is before end if both times are provided.
         if start and end and self._invalid_dates(start, end):
@@ -494,8 +494,8 @@ class EventSerializer(serializers.ModelSerializer[Event]):
                 code="invalid_time_order",
             )
 
-        creation_date = data.get("creation_date")
-        deletion_date = data.get("deletion_date")
+        creation_date = attrs.get("creation_date")
+        deletion_date = attrs.get("deletion_date")
 
         # Verify creation_date is before deletion_date if both times are provided.
         if (
@@ -510,15 +510,15 @@ class EventSerializer(serializers.ModelSerializer[Event]):
                 code="invalid_date_order",
             )
 
-        terms_checked = data.get("terms_checked")
+        terms_checked = attrs.get("terms_checked")
 
-        # If data.get("terms_checked") is False.
+        # If attrs.get("terms_checked") is False.
         if terms_checked and terms_checked is False:
             raise serializers.ValidationError(
                 "You must accept the terms of service to create an event."
             )
 
-        return data
+        return attrs
 
     def create(self, validated_data: dict[str, Any]) -> Event:
         """
@@ -598,7 +598,7 @@ class FormatSerializer(serializers.ModelSerializer[Event]):
         model = Format
         fields = "__all__"
 
-    def validate(self, data: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
+    def validate(self, attrs: Dict[str, Union[str, int]]) -> Dict[str, Union[str, int]]:
         """
         Validate format data including date constraints.
 
@@ -617,6 +617,6 @@ class FormatSerializer(serializers.ModelSerializer[Event]):
         ValidationError
             If validation fails for dates.
         """
-        validate_creation_and_deprecation_dates(data)
+        validate_creation_and_deprecation_dates(attrs)
 
-        return data
+        return attrs

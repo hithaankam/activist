@@ -6,7 +6,7 @@ API views for organization management.
 
 import logging
 import os
-from typing import Any, Sequence, Type
+from typing import Any, Sequence, Type, cast
 from uuid import UUID
 
 from django.contrib.auth.models import AnonymousUser
@@ -189,7 +189,7 @@ class OrganizationByUserAPIView(GenericAPIView[Organization]):
         },
     )
     def get(self, request: Request, user_id: None | UUID = None) -> Response:
-        user: UserModel | AnonymousUser = request.user
+        user = cast(UserModel, request.user)
         if user_id is None:
             return Response(
                 {"detail": "User ID is required."},
@@ -355,7 +355,8 @@ class OrganizationDetailAPIView(APIView):
                 {"detail": "Organization not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != org.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to update this organization."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -434,7 +435,8 @@ class OrganizationDetailAPIView(APIView):
                 {"detail": "Organization not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != org.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to delete this organization."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -485,12 +487,13 @@ class OrganizationFlagAPIView(GenericAPIView[OrganizationFlag]):
         serializer = serializer_class(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        user = cast(UserModel, request.user)
         try:
             serializer.save(created_by=request.user)
-            logger.info(f"OrganizationFlag created by user {request.user.id}")
+            logger.info(f"OrganizationFlag created by user {user.id}")
 
         except (IntegrityError, OperationalError):
-            logger.exception(f"Failed to create flag for user {request.user.id}")
+            logger.exception(f"Failed to create flag for user {user.id}")
             return Response(
                 {"detail": "Failed to create flag."}, status=status.HTTP_400_BAD_REQUEST
             )
@@ -575,7 +578,8 @@ class OrganizationFaqViewSet(viewsets.ModelViewSet[OrganizationFaq]):
 
         org: Organization = serializer.validated_data["org"]
 
-        if request.user != org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != org.created_by and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to create FAQs for this organization."
@@ -600,7 +604,8 @@ class OrganizationFaqViewSet(viewsets.ModelViewSet[OrganizationFaq]):
                 {"detail": "FAQ not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != faq.org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != faq.org.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to update this FAQ."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -643,7 +648,8 @@ class OrganizationFaqViewSet(viewsets.ModelViewSet[OrganizationFaq]):
         else:
             raise ValueError("Org is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != creator and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to delete this FAQ."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -651,7 +657,7 @@ class OrganizationFaqViewSet(viewsets.ModelViewSet[OrganizationFaq]):
 
         faq.delete()
         logger.info(
-            f"FAQ {pk} deleted for organization {org.id} by user {request.user.id}"
+            f"FAQ {pk} deleted for organization {org.id} by user {user.id}"
         )
 
         return Response(
@@ -686,7 +692,8 @@ class OrganizationSocialLinkViewSet(viewsets.ModelViewSet[OrganizationSocialLink
 
         org: Organization = serializer.validated_data["org"]
 
-        if request.user != org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != org.created_by and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to create social links for this organization."
@@ -733,7 +740,8 @@ class OrganizationSocialLinkViewSet(viewsets.ModelViewSet[OrganizationSocialLink
         else:
             raise ValueError("Org is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != creator and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to update the social links for this organization."
@@ -786,7 +794,8 @@ class OrganizationSocialLinkViewSet(viewsets.ModelViewSet[OrganizationSocialLink
         else:
             raise ValueError("Org is None.")
 
-        if request.user != creator and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != creator and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to delete this social link."},
                 status=status.HTTP_403_FORBIDDEN,
@@ -794,7 +803,7 @@ class OrganizationSocialLinkViewSet(viewsets.ModelViewSet[OrganizationSocialLink
 
         social_link.delete()
         logger.info(
-            f"Social link {pk} deleted for org {org.id} by user {request.user.id}"
+            f"Social link {pk} deleted for org {org.id} by user {user.id}"
         )
 
         return Response(
@@ -835,9 +844,10 @@ class OrganizationTextViewSet(GenericAPIView[OrganizationText]):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
+        user = cast(UserModel, request.user)
         if (
             request.user != getattr(org_text.org, "created_by", None)
-            and not request.user.is_staff
+            and not user.is_staff
         ):
             return Response(
                 {
@@ -867,7 +877,8 @@ class OrganizationResourceViewSet(viewsets.ModelViewSet[OrganizationResource]):
 
         org: Organization = serializer.validated_data["org"]
 
-        if request.user != org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != org.created_by and not user.is_staff:
             return Response(
                 {
                     "detail": "You are not authorized to create resource for this organization."
@@ -876,7 +887,7 @@ class OrganizationResourceViewSet(viewsets.ModelViewSet[OrganizationResource]):
             )
         serializer.save(created_by=request.user)
         logger.info(
-            f"Resource created for organization {org.id} by user {request.user.id}"
+            f"Resource created for organization {org.id} by user {user.id}"
         )
 
         return Response(
@@ -894,7 +905,8 @@ class OrganizationResourceViewSet(viewsets.ModelViewSet[OrganizationResource]):
                 {"detail": "Resource not found."}, status=status.HTTP_404_NOT_FOUND
             )
 
-        if request.user != resource.org.created_by and not request.user.is_staff:
+        user = cast(UserModel, request.user)
+        if request.user != resource.org.created_by and not user.is_staff:
             return Response(
                 {"detail": "You are not authorized to update this resource."},
                 status=status.HTTP_403_FORBIDDEN,

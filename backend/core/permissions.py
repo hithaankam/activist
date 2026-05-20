@@ -1,7 +1,7 @@
 # SPDX-License-Identifier: AGPL-3.0-or-later
 """Custom permissions for the Activist project."""
 
-from typing import Any
+from typing import Any, cast
 
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 from rest_framework.request import Request
@@ -67,8 +67,11 @@ class IsAdminStaffCreatorOrReadOnly(BasePermission):
         if request.method in SAFE_METHODS:
             return True
 
+        from authentication.models import UserModel
+
+        user = cast(UserModel, request.user)
         return (
-            obj.created_by == request.user
-            or request.user.is_staff
-            or request.user.is_superuser
+            obj.created_by == user
+            or user.is_staff
+            or user.is_superuser
         )
