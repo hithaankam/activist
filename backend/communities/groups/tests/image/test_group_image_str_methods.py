@@ -25,6 +25,6 @@ def test_group_image_str_methods() -> None:
     assert str(group_image) == f"{group_image.id}"
 
     # Cleanup after the test.
-    file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+    file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
     if os.path.exists(file_path):
         os.remove(file_path)

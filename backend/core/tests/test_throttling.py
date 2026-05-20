@@ -5,7 +5,7 @@ from django.core.cache import cache
 from rest_framework import status
 from rest_framework.settings import api_settings
 from rest_framework.test import APIClient
-from rest_framework.throttling import AnonRateThrottle, UserRateThrottle
+from rest_framework.throttling import AnonRateThrottle, BaseThrottle, UserRateThrottle
 
 from authentication.factories import UserFactory
 from communities.organizations.views import OrganizationAPIView
@@ -80,7 +80,7 @@ def _set_test_view_throttle_classes() -> list[type]:
     OrganizationAPIView is imported before tests mutate settings, so its
     class-level ``throttle_classes`` may still reflect startup defaults.
     """
-    original = list(getattr(OrganizationAPIView, "throttle_classes", []))
+    original: list[type[BaseThrottle]] = list(getattr(OrganizationAPIView, "throttle_classes", []))
     OrganizationAPIView.throttle_classes = [AnonRateThrottle, UserRateThrottle]
     return original
 

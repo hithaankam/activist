@@ -145,7 +145,7 @@ class OrganizationAPIView(GenericAPIView[Organization]):
         org = serializer.save(created_by=request.user)
         logger.info(f"Organization created successfully: {org.id}")
 
-        org.application.create()
+        org.application.create()  # ty: ignore[unresolved-attribute]
 
         data = OrganizationSerializer(org).data
 

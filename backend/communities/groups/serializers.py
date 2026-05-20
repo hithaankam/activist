@@ -266,7 +266,7 @@ class GroupPOSTSerializer(serializers.Serializer[Group]):
                     primary=True,
                     description=description,
                 )
-                group.texts.set([group_text])
+                group.texts.set([group_text])  # ty: ignore[unresolved-attribute]
 
                 logger.info("Created Group with id: %s", group.id)
 

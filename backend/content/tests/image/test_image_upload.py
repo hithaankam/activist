@@ -56,7 +56,7 @@ def image_with_file() -> Generator[Image, None, None]:
     yield image
 
     # Cleanup after the test.
-    file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+    file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
     if os.path.exists(file_path):
         os.remove(file_path)
 
@@ -92,11 +92,11 @@ def test_image_creation(image_with_file: Image) -> None:
     """
     image = image_with_file
 
-    file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+    file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
 
     assert os.path.exists(file_path)
     assert image.id is not None
-    assert image.file_object.name.endswith(".jpg")
+    assert str(image.file_object).endswith(".jpg")
     assert isinstance(image.creation_date, datetime)
 
 
@@ -112,7 +112,7 @@ def test_image_serializer(image_with_file: Image) -> None:
     assert "file_object" in serializer.data
     assert "creation_date" in serializer.data
 
-    file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+    file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
     assert os.path.exists(file_path)
 
 
@@ -146,7 +146,7 @@ def test_image_list_view(client: APIClient) -> None:
     This is like a GET request.
     """
     images = ImageFactory.create_batch(3)
-    filenames = [image.file_object.name for image in images]
+    filenames = [str(image.file_object) for image in images]
 
     response = client.get("/v1/content/images")
 
@@ -260,14 +260,14 @@ def test_image_create_multiple_files_view(client: APIClient) -> None:
 
     # Assert that the files were uploaded/saved to the media root.
     for image in Image.objects.all():
-        file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+        file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
         assert os.path.exists(file_path), (
             f"File {file_path} was not found in the filesystem"
         )
 
     # Cleanup all test files.
     for image in Image.objects.all():
-        file_path = os.path.join(settings.MEDIA_ROOT, image.file_object.name)
+        file_path = os.path.join(settings.MEDIA_ROOT, str(image.file_object))
         if os.path.exists(file_path):
             os.remove(file_path)
 

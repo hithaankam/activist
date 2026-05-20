@@ -410,7 +410,7 @@ class EventPOSTSerializer(serializers.Serializer[Any]):
                 primary=True,
                 description=description,
             )
-            event.texts.set([event_text])
+            event.texts.set([event_text])  # ty: ignore[unresolved-attribute]
 
             # Set many-to-many relationships.
             if orgs_data:

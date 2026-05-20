@@ -48,7 +48,7 @@ def test_export_events_ics_404():
     bad_event_uuid = uuid4()
 
     response = client.get(
-        path="/v1/events/event_calendar", data={"event_id": bad_event_uuid}
+        path="/v1/events/event_calendar", data={"event_id": str(bad_event_uuid)}
     )
 
     assert response.status_code == 404
