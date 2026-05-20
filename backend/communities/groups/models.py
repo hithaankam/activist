@@ -96,7 +96,7 @@ class GroupImage(models.Model):
     sequence_index = models.IntegerField()
 
     def __str__(self) -> str:
-        return str(self.id)
+        return str(self.pk)
 
 
 # MARK: Member
@@ -120,7 +120,7 @@ class GroupMember(models.Model):
     is_comms = models.BooleanField(default=False)
 
     def __str__(self) -> str:
-        return str(self.id)
+        return str(self.pk)
 
 
 # MARK: Resource
